@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticleStorage } from './interfaces/article.storage.interface';
+import { Article } from './entities/article.entity';
 
 @Injectable()
 export class ArticleService {
@@ -17,8 +18,12 @@ export class ArticleService {
     return this.storage.findAll();
   }
 
-  findOne(id: string) {
+  findById(id: string) {
     return this.storage.findById(id);
+  }
+
+  findByAuthor(userId: string): Article[] {
+    return this.storage.findByAuthor(userId);
   }
 
   update(id: string, updateArticleDto: UpdateArticleDto) {

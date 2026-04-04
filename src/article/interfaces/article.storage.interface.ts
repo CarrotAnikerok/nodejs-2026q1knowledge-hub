@@ -11,4 +11,5 @@ export interface ArticleStorage {
     updateArticleDto: UpdateArticleDto,
   ): UpdateArticleDto | undefined;
   delete(id: string): void;
+  findByAuthor(userId: string): Article[];
 }

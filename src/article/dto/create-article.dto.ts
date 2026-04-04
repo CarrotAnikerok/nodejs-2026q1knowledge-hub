@@ -19,6 +19,7 @@ export class CreateArticleDto {
   status: ArticleStatus;
 
   @IsUUID()
+  // or null
   authorId: string | null;
 
   @IsUUID()

@@ -17,6 +17,10 @@ export class InMemoryArticleStore implements ArticleStorage {
     return this.articles.find((article) => article.id === id);
   }
 
+  findByAuthor(userId: string): Article[] {
+    return this.articles.filter((article) => article.authorId === userId);
+  }
+
   create(articleDto: CreateArticleDto): Article {
     const newUser: Article = {
       ...articleDto,

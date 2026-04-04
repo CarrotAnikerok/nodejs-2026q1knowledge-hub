@@ -1,30 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { InMemoryUsersStore } from './store/users.storage';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { ResponseUserDto } from './dto/response-user.dto';
+import { UserStorage } from './interfaces/users.storage.interface';
+import { ArticleService } from 'src/article/article.service';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(private storage: InMemoryUsersStore) {}
+  constructor(
+    @Inject('UserStorage') private storage: UserStorage,
+    private articleService: ArticleService,
+  ) {}
 
-  create(createUserDto: CreateUserDto): ResponseUserDto {
+  create(createUserDto: CreateUserDto): User | undefined {
     return this.storage.create(createUserDto);
   }
 
-  findAll(): ResponseUserDto[] {
+  findAll(): User[] {
     return this.storage.findAll();
   }
 
-  findOne(id: string): ResponseUserDto {
+  findById(id: string): User | undefined {
     return this.storage.findById(id);
   }
 
-  update(id: string, passwordData: UpdatePasswordDto): ResponseUserDto {
-    return this.storage.update(id, passwordData);
+  findByLogin(login: string): User | undefined {
+    console.log('login is ' + login);
+    return this.storage.findByLogin(login);
+  }
+
+  update(id: string, passwordData: UpdatePasswordDto): User | undefined {
+    const user = this.storage.findById(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    console.log(
+      `old password ${user.password} and old from req password ${passwordData.oldPassword}`,
+    );
+    if (user.password !== passwordData.oldPassword) {
+      throw new HttpException('Password is incorrect', HttpStatus.FORBIDDEN);
+    }
+
+    return this.storage.update(id, { password: passwordData.newPassword });
   }
 
   remove(id: string) {
+    const articles = this.articleService.findByAuthor(id);
+    console.log(articles.join(','));
+    articles.forEach((article) =>
+      this.articleService.update(article.id, { authorId: null }),
+    );
+
     return this.storage.delete(id);
   }
 }

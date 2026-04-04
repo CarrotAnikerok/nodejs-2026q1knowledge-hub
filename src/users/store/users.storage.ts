@@ -1,11 +1,12 @@
 import { randomUUID } from 'crypto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { User } from '../entities/user.entity';
-import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { Injectable } from '@nestjs/common';
+import { UserStorage } from '../interfaces/users.storage.interface';
+import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
-export class InMemoryUsersStore {
+export class InMemoryUsersStore implements UserStorage {
   private users: User[] = [];
 
   findAll(): User[] {
@@ -14,6 +15,10 @@ export class InMemoryUsersStore {
 
   findById(id: string): User | undefined {
     return this.users.find((user) => user.id === id);
+  }
+
+  findByLogin(login: string): User | undefined {
+    return this.users.find((user) => user.login === login);
   }
 
   create(userDto: CreateUserDto): User {
@@ -28,15 +33,9 @@ export class InMemoryUsersStore {
     return newUser;
   }
 
-  update(id: string, passwordData: UpdatePasswordDto): User | undefined {
+  update(id: string, updateUserDto: UpdateUserDto): User | undefined {
     const userToUpdate = this.findById(id);
-    console.log(JSON.stringify(userToUpdate));
-
-    if (userToUpdate.password === passwordData.oldPassword) {
-      userToUpdate.password = passwordData.newPassword;
-    } else {
-      throw Error('password is wrong');
-    }
+    Object.assign(userToUpdate, updateUserDto);
 
     return userToUpdate;
   }
@@ -47,8 +46,6 @@ export class InMemoryUsersStore {
 
     if (userIndex !== -1) {
       this.users.splice(userIndex, 1);
-    } else {
-      throw Error('User doesn`t exist');
     }
   }
 }

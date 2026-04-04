@@ -12,5 +12,12 @@ import { InMemoryArticleStore } from './store/article.storage';
       useClass: InMemoryArticleStore,
     },
   ],
+  exports: [
+    ArticleService,
+    {
+      provide: 'ArticleStorage',
+      useClass: InMemoryArticleStore,
+    },
+  ],
 })
 export class ArticleModule {}
