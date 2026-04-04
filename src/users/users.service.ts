@@ -1,26 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { InMemoryUsersStore } from './store/users.storage';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { ResponseUserDto } from './dto/response-user.dto';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private storage: InMemoryUsersStore) {}
+
+  create(createUserDto: CreateUserDto): ResponseUserDto {
+    return this.storage.create(createUserDto);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  findAll(): ResponseUserDto[] {
+    return this.storage.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string): ResponseUserDto {
+    return this.storage.findById(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(id: string, passwordData: UpdatePasswordDto): ResponseUserDto {
+    return this.storage.update(id, passwordData);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    return this.storage.delete(id);
   }
 }
