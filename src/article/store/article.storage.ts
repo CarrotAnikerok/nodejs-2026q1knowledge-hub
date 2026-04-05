@@ -39,6 +39,7 @@ export class InMemoryArticleStore implements ArticleStorage {
   ): UpdateArticleDto | undefined {
     const articleToUpdate = this.findById(id);
     Object.assign(articleToUpdate, updateArticleDto);
+    articleToUpdate.updatedAt = Date.now();
 
     return articleToUpdate;
   }
@@ -49,8 +50,6 @@ export class InMemoryArticleStore implements ArticleStorage {
 
     if (userIndex !== -1) {
       this.articles.splice(userIndex, 1);
-    } else {
-      throw Error('Article doesn`t exist');
     }
   }
 }

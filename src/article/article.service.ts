@@ -10,15 +10,15 @@ export class ArticleService {
     @Inject('ArticleStorage') private readonly storage: ArticleStorage,
   ) {}
 
-  create(createArticleDto: CreateArticleDto) {
+  create(createArticleDto: CreateArticleDto): Article {
     return this.storage.create(createArticleDto);
   }
 
-  findAll() {
+  findAll(): Article[] {
     return this.storage.findAll();
   }
 
-  findById(id: string) {
+  findById(id: string): Article | undefined {
     return this.storage.findById(id);
   }
 

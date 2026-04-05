@@ -1,14 +1,14 @@
 import {
-  IsAlphanumeric,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
 import { ArticleStatus } from 'src/constants/enums';
 
 export class CreateArticleDto {
-  @IsAlphanumeric()
+  @IsString()
   @IsNotEmpty()
   title: string;
 
@@ -19,10 +19,11 @@ export class CreateArticleDto {
   status: ArticleStatus;
 
   @IsUUID()
-  // or null
+  @IsOptional()
   authorId: string | null;
 
   @IsUUID()
+  @IsOptional()
   categoryId: string | null;
 
   tags: string[];

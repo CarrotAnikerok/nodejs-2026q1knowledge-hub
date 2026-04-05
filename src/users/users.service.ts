@@ -31,7 +31,6 @@ export class UsersService {
   }
 
   findByLogin(login: string): User | undefined {
-    console.log('login is ' + login);
     return this.storage.findByLogin(login);
   }
 
@@ -41,9 +40,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    console.log(
-      `old password ${user.password} and old from req password ${passwordData.oldPassword}`,
-    );
+
     if (user.password !== passwordData.oldPassword) {
       throw new HttpException('Password is incorrect', HttpStatus.FORBIDDEN);
     }
@@ -53,7 +50,7 @@ export class UsersService {
 
   remove(id: string) {
     const articles = this.articleService.findByAuthor(id);
-    console.log(articles.join(','));
+
     articles.forEach((article) =>
       this.articleService.update(article.id, { authorId: null }),
     );

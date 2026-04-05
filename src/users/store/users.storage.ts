@@ -36,6 +36,7 @@ export class InMemoryUsersStore implements UserStorage {
   update(id: string, updateUserDto: UpdateUserDto): User | undefined {
     const userToUpdate = this.findById(id);
     Object.assign(userToUpdate, updateUserDto);
+    userToUpdate.updatedAt = Date.now();
 
     return userToUpdate;
   }

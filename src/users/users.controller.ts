@@ -39,12 +39,7 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string): ResponseUserDto {
-    const user = this.usersService.findById(id);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
+    const user = this.#checkExisting(id);
     return new ResponseUserDto(user);
   }
 
@@ -55,19 +50,23 @@ export class UsersController {
     @Body() passwordData: UpdatePasswordDto,
   ): ResponseUserDto {
     const user = this.usersService.update(id, passwordData);
-
     return new ResponseUserDto(user);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id', ParseUUIDPipe) id: string) {
+    this.#checkExisting(id);
+    return this.usersService.remove(id);
+  }
+
+  #checkExisting(id: string) {
     const user = this.usersService.findById(id);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('User is not found');
     }
 
-    return this.usersService.remove(id);
+    return user;
   }
 }
