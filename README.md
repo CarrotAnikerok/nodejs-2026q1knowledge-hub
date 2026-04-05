@@ -64,8 +64,8 @@ You can see and test it in OpenAPI documentation from upper link.
 From special, toy can filter articles with queries by status, categoryId and tag.
 
 Examples:
-/article?status=draft
-/article?tag=nodejs&published=draft
+- /article?status=draft
+- /article?tag=nodejs&published=draft
 
 ## Testing
 
