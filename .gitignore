@@ -1,6 +1,8 @@
 # compiled output
 /dist
 /node_modules
+.env
+tsconfig.build.tsbuildinfo
 
 # Logs
 logs
