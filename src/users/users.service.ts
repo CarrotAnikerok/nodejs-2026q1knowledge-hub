@@ -9,7 +9,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserStorage } from './interfaces/users.storage.interface';
 import { ArticleService } from 'src/article/article.service';
-import { User } from './entities/user.entity';
+import { User } from './entities/users.entity';
 import { CommentService } from 'src/comment/comment.service';
 
 @Injectable()
