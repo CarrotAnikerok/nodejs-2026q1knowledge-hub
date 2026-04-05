@@ -3,20 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { CommentStorage } from '../interfaces/comment.storage.interface';
 import { Comment } from '../entities/comment.entity';
 import { CreateCommentDto } from '../dto/create-comment.dto';
-import { GetCommentQueryDto } from '../dto/get-comment.query.dto';
 
 @Injectable()
 export class InMemoryCommentStore implements CommentStorage {
   private comments: Comment[] = [];
 
-  findAll(commentQueryDto: GetCommentQueryDto): Comment[] {
-    return this.comments.filter(
-      (comment) => comment.articleId === commentQueryDto.articleId,
-    );
+  findByArticle(articleId: string): Comment[] {
+    return this.comments.filter((comment) => comment.articleId === articleId);
   }
 
   findById(id: string): Comment | undefined {
-    return this.comments.find((user) => user.id === id);
+    return this.comments.find((comment) => comment.id === id);
   }
 
   findByAuthor(userId: string): Comment[] {

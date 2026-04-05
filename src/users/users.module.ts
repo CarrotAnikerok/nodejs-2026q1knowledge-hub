@@ -2,21 +2,17 @@ import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { InMemoryUsersStore } from './store/users.storage';
-import { ArticleService } from 'src/article/article.service';
-import { InMemoryArticleStore } from 'src/article/store/article.storage';
+import { ArticleModule } from 'src/article/article.module';
+import { CommentModule } from 'src/comment/comment.module';
 
 @Module({
+  imports: [ArticleModule, CommentModule],
   controllers: [UsersController],
   providers: [
     UsersService,
-    ArticleService,
     {
       provide: 'UserStorage',
       useClass: InMemoryUsersStore,
-    },
-    {
-      provide: 'ArticleStorage',
-      useClass: InMemoryArticleStore,
     },
   ],
   exports: [UsersService],

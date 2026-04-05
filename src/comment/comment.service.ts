@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentStorage } from './interfaces/comment.storage.interface';
-import { GetCommentQueryDto } from './dto/get-comment.query.dto';
 
 @Injectable()
 export class CommentService {
@@ -13,12 +12,16 @@ export class CommentService {
     return this.storage.create(createCommentDto);
   }
 
-  findAll(commentQueryDto: GetCommentQueryDto) {
-    return this.storage.findAll(commentQueryDto);
+  findByArticle(articleId: string) {
+    return this.storage.findByArticle(articleId);
   }
 
   findOne(id: string) {
     return this.storage.findById(id);
+  }
+
+  findByAuthor(id: string) {
+    return this.storage.findByAuthor(id);
   }
 
   remove(id: string) {

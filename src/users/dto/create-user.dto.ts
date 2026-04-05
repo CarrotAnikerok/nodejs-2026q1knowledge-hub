@@ -1,15 +1,16 @@
-import { IsAlphanumeric, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { UserRole } from 'src/constants/enums';
 
 export class CreateUserDto {
-  @IsAlphanumeric()
+  @IsString()
   @IsNotEmpty()
   login: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   password: string;
 
   @IsEnum(UserRole)
+  @IsOptional()
   role: UserRole;
 }

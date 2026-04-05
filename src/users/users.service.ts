@@ -10,12 +10,14 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserStorage } from './interfaces/users.storage.interface';
 import { ArticleService } from 'src/article/article.service';
 import { User } from './entities/user.entity';
+import { CommentService } from 'src/comment/comment.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject('UserStorage') private storage: UserStorage,
     private articleService: ArticleService,
+    private commentService: CommentService,
   ) {}
 
   create(createUserDto: CreateUserDto): User | undefined {
@@ -50,10 +52,15 @@ export class UsersService {
 
   remove(id: string) {
     const articles = this.articleService.findByAuthor(id);
+    const comments = this.commentService.findByAuthor(id);
 
     articles.forEach((article) =>
       this.articleService.update(article.id, { authorId: null }),
     );
+
+    comments.forEach((comment) => {
+      this.commentService.remove(comment.id);
+    });
 
     return this.storage.delete(id);
   }

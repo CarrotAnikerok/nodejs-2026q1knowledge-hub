@@ -8,7 +8,13 @@ import { CategoryModule } from './category/category.module';
 import { CommentModule } from './comment/comment.module';
 
 @Module({
-  imports: [UsersModule, ArticleModule, AuthModule, CategoryModule, CommentModule],
+  imports: [
+    UsersModule,
+    ArticleModule,
+    AuthModule,
+    CategoryModule,
+    CommentModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

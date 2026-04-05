@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsOptional,
@@ -26,5 +27,7 @@ export class CreateArticleDto {
   @IsOptional()
   categoryId: string | null;
 
+  @IsArray()
+  @IsOptional()
   tags: string[];
 }

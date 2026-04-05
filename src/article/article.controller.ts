@@ -9,10 +9,13 @@ import {
   NotFoundException,
   HttpStatus,
   HttpCode,
+  ParseUUIDPipe,
+  Query,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { FindQueryArticleDto } from './dto/find-query-article.dto';
 
 @Controller('article')
 export class ArticleController {
@@ -24,25 +27,28 @@ export class ArticleController {
   }
 
   @Get()
-  findAll() {
-    return this.articleService.findAll();
+  findAll(@Query() queryArticleDto: FindQueryArticleDto) {
+    return this.articleService.findAllWithQuery(queryArticleDto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     const article = this.#checkExisting(id);
     return article;
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateArticleDto: UpdateArticleDto,
+  ) {
     this.#checkExisting(id);
     return this.articleService.update(id, updateArticleDto);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     this.#checkExisting(id);
     return this.articleService.remove(id);
   }

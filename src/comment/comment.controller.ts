@@ -10,6 +10,7 @@ import {
   HttpStatus,
   HttpCode,
   NotFoundException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -27,7 +28,7 @@ export class CommentController {
   create(@Body() createCommentDto: CreateCommentDto) {
     const article = this.articleService.findById(createCommentDto.articleId);
 
-    if (article) {
+    if (!article) {
       throw new HttpException(
         'Article is not found',
         HttpStatus.UNPROCESSABLE_ENTITY,
@@ -38,19 +39,29 @@ export class CommentController {
   }
 
   @Get()
-  findAll(@Query('articleId') commentQueryDto: GetCommentQueryDto) {
-    return this.commentService.findAll(commentQueryDto);
+  findAllByArticle(@Query() commentQueryDto: GetCommentQueryDto) {
+    return this.commentService.findByArticle(commentQueryDto.articleId);
+  }
+
+  @Get(':id')
+  findOne(@Query() @Param('id', ParseUUIDPipe) id: string) {
+    return this.#checkExisting(id);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    this.#checkExisting(id);
+    return this.commentService.remove(id);
+  }
+
+  #checkExisting(id: string) {
     const comment = this.commentService.findOne(id);
 
     if (!comment) {
       throw new NotFoundException('Comment is not found');
     }
 
-    return this.commentService.remove(id);
+    return comment;
   }
 }

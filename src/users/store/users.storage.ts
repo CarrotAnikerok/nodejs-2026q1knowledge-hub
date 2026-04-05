@@ -4,6 +4,7 @@ import { User } from '../entities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { UserStorage } from '../interfaces/users.storage.interface';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { UserRole } from 'src/constants/enums';
 
 @Injectable()
 export class InMemoryUsersStore implements UserStorage {
@@ -28,6 +29,10 @@ export class InMemoryUsersStore implements UserStorage {
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
+
+    if (!newUser.role) {
+      newUser.role = UserRole.VIEWER;
+    }
 
     this.users.push(newUser);
     return newUser;
