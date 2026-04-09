@@ -8,7 +8,20 @@ Hello! Some additional info about this repo and its differences from original on
 - added `tsconfig.build.tsbuildinfo` and `env` to .gitignore
 - upgraded @nestjs/jwt, @nestjs/swagger, class-validator, @types/jest in package.json. it works as it supposed on my machine.
 
+## Docker
 
+Final application image size: 235.96мб
+Docker Hub link: https://hub.docker.com/repository/docker/carrotanikerok/nodejs-2026q1knowledge-hub-web/general
+
+####Results of security scan:
+
+39 vulnerabilities found in 16 packages
+  LOW       2   
+  MEDIUM    19  
+  HIGH      18  
+  CRITICAL  0   
+
+No critical vulnerabilities!
 
 ## Prerequisites
 
