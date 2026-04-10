@@ -23,6 +23,14 @@ Docker Hub link: https://hub.docker.com/repository/docker/carrotanikerok/nodejs-
 
 No critical vulnerabilities!
 
+## Prisma
+
+To configure prisma working don't forget to run:
+
+```
+npx prisma generate
+```
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
