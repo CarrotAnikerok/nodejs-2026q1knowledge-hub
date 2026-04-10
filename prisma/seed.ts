@@ -86,15 +86,17 @@ async function main() {
   });
 
   const tagNames = ['MLP', 'Harry Potter', 'Gravity Falls', 'Love', 'Plants'];
-  const tags = await Promise.all(
-    tagNames.map((name) => {
-      prisma.tag.upsert({
-        where: { name },
-        update: {},
-        create: { name },
-      });
-    }),
-  );
+  const tags = [];
+
+  for (const name of tagNames) {
+    const tag = await prisma.tag.upsert({
+      where: { name },
+      update: {},
+      create: { name },
+    });
+
+    tags.push(tag);
+  }
 
   const firstArticle = await prisma.article.upsert({
     where: { id: '3117c6ed-b065-4d4f-91ca-3217bc008e76' },
@@ -145,10 +147,10 @@ async function main() {
   });
 
   const fourthArticle = await prisma.article.upsert({
-    where: { id: '2db5ae9f-eada-4fef-8c95-9dbb33e7ada5' },
+    where: { id: '26ff4671-0f60-455a-80a4-866a8ab28dbf' },
     update: {},
     create: {
-      id: '2db5ae9f-eada-4fef-8c95-9dbb33e7ada5',
+      id: '26ff4671-0f60-455a-80a4-866a8ab28dbf',
       title: 'Fourth article',
       content: 'fourth',
       status: Status.PUBLISHED,
