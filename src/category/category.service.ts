@@ -1,39 +1,39 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { CategoryStorage } from './interfaces/category.storage.interface';
 import { ArticleService } from 'src/article/article.service';
+import { CategoryDbStorage } from './store/category.db.storage';
 
 @Injectable()
 export class CategoryService {
   constructor(
-    @Inject('CategoryStorage') private readonly storage: CategoryStorage,
+    private readonly storage: CategoryDbStorage,
     private readonly articleService: ArticleService,
   ) {}
 
-  create(createCategoryDto: CreateCategoryDto) {
-    return this.storage.create(createCategoryDto);
+  async create(createCategoryDto: CreateCategoryDto) {
+    return await this.storage.create(createCategoryDto);
   }
 
-  findAll() {
-    return this.storage.findAll();
+  async findAll() {
+    return await this.storage.findAll();
   }
 
-  findOne(id: string) {
-    return this.storage.findById(id);
+  async findOne(id: string) {
+    return await this.storage.findById(id);
   }
 
-  update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    return this.storage.update(id, updateCategoryDto);
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    return await this.storage.update(id, updateCategoryDto);
   }
 
-  remove(id: string) {
-    const articles = this.articleService.findByCategory(id);
+  async remove(id: string) {
+    const articles = await this.articleService.findByCategory(id);
 
-    articles.forEach((article) => {
-      this.articleService.update(article.id, { categoryId: null });
+    articles.forEach(async (article) => {
+      await this.articleService.update(article.id, { categoryId: null });
     });
 
-    return this.storage.delete(id);
+    return await this.storage.delete(id);
   }
 }

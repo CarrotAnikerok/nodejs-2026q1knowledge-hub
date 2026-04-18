@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -26,7 +24,7 @@ enum Status {
 }
 
 model User {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @db.Uuid
   login String
   password String
   role Role
@@ -38,7 +36,7 @@ model User {
 }
 
 model Article {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @db.Uuid
   title String
   content String
   status Status
@@ -53,10 +51,12 @@ model Article {
 
   comments Comment[]
   tags Tag[]
+
+  @@index([status, categoryId]) //что это
 }
 
 model Category {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @db.Uuid
   name String
   description String
 
@@ -64,7 +64,7 @@ model Category {
 }
 
 model Comment {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @db.Uuid
   content String
   createdAt DateTime @default(now())
 
@@ -76,7 +76,10 @@ model Comment {
 }
 
 model Tag {
-  id String @id @default(uuid())
+  id String @id @default(uuid()) @db.Uuid
   name String @unique
+  
   articles Article[]
+
+  @@index([name])
 }

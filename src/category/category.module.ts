@@ -1,18 +1,13 @@
 import { Module } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
-import { InMemoryCategoryStore } from './store/category.storage';
 import { ArticleModule } from 'src/article/article.module';
+import { PrismaModule } from 'src/prisma/prisma.module';
+import { CategoryDbStorage } from './store/category.db.storage';
 
 @Module({
-  imports: [ArticleModule],
+  imports: [ArticleModule, PrismaModule],
   controllers: [CategoryController],
-  providers: [
-    CategoryService,
-    {
-      provide: 'CategoryStorage',
-      useClass: InMemoryCategoryStore,
-    },
-  ],
+  providers: [CategoryService, CategoryDbStorage],
 })
 export class CategoryModule {}

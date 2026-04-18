@@ -1,53 +1,55 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
-import { ArticleStorage } from './interfaces/article.storage.interface';
 import { Article } from './entities/article.entity';
 import { CommentService } from 'src/comment/comment.service';
 import { FindQueryArticleDto } from './dto/find-query-article.dto';
+import { ArticleDbStorage } from './store/article.db.storage';
 
 @Injectable()
 export class ArticleService {
   constructor(
-    @Inject('ArticleStorage') private readonly storage: ArticleStorage,
+    private readonly storage: ArticleDbStorage,
     private commentService: CommentService,
   ) {}
 
-  create(createArticleDto: CreateArticleDto): Article {
-    return this.storage.create(createArticleDto);
+  async create(createArticleDto: CreateArticleDto): Promise<Article> {
+    return await this.storage.create(createArticleDto);
   }
 
-  findAll(): Article[] {
-    return this.storage.findAll();
+  async findAll(): Promise<Article[]> {
+    return await this.storage.findAll();
   }
 
-  findAllWithQuery(queryArticleDto: FindQueryArticleDto): Article[] {
-    return this.storage.findAllWithQuery(queryArticleDto);
+  async findAllWithQuery(
+    queryArticleDto: FindQueryArticleDto,
+  ): Promise<Article[]> {
+    return await this.storage.findAllWithQuery(queryArticleDto);
   }
 
-  findById(id: string): Article | undefined {
-    return this.storage.findById(id);
+  async findById(id: string): Promise<Article | undefined> {
+    return await this.storage.findById(id);
   }
 
-  findByAuthor(userId: string): Article[] {
-    return this.storage.findByAuthor(userId);
+  async findByAuthor(userId: string): Promise<Article[]> {
+    return await this.storage.findByAuthor(userId);
   }
 
-  findByCategory(categoryId: string): Article[] {
-    return this.storage.findByCategory(categoryId);
+  async findByCategory(categoryId: string): Promise<Article[]> {
+    return await this.storage.findByCategory(categoryId);
   }
 
-  update(id: string, updateArticleDto: UpdateArticleDto) {
-    return this.storage.update(id, updateArticleDto);
+  async update(id: string, updateArticleDto: UpdateArticleDto) {
+    return await this.storage.update(id, updateArticleDto);
   }
 
-  remove(id: string) {
-    const comments = this.commentService.findByArticle(id);
+  async remove(id: string) {
+    const comments = await this.commentService.findByArticle(id);
 
-    comments.forEach((comments) => {
-      this.commentService.remove(comments.id);
+    comments.forEach(async (comments) => {
+      await this.commentService.remove(comments.id);
     });
 
-    return this.storage.delete(id);
+    return await this.storage.delete(id);
   }
 }

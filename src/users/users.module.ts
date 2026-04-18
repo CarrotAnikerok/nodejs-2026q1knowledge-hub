@@ -1,20 +1,15 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { InMemoryUsersStore } from './store/users.storage';
 import { ArticleModule } from 'src/article/article.module';
 import { CommentModule } from 'src/comment/comment.module';
+import { UserDbStorage } from './store/users.db.storage';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
-  imports: [ArticleModule, CommentModule],
+  imports: [ArticleModule, CommentModule, PrismaModule],
   controllers: [UsersController],
-  providers: [
-    UsersService,
-    {
-      provide: 'UserStorage',
-      useClass: InMemoryUsersStore,
-    },
-  ],
+  providers: [UsersService, UserDbStorage],
   exports: [UsersService],
 })
 export class UsersModule {}

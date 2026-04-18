@@ -24,32 +24,34 @@ export class UsersController {
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
-  create(@Body() createUserDto: CreateUserDto): ResponseUserDto {
-    const user = this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto): Promise<ResponseUserDto> {
+    const user = await this.usersService.create(createUserDto);
     return new ResponseUserDto(user);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  findAll(): ResponseUserDto[] {
-    const allUsers = this.usersService.findAll();
+  async findAll(): Promise<ResponseUserDto[]> {
+    const allUsers = await this.usersService.findAll();
     return allUsers.map((user) => new ResponseUserDto(user));
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string): ResponseUserDto {
-    const user = this.#checkExisting(id);
+  async findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<ResponseUserDto> {
+    const user = await this.#checkExisting(id);
     return new ResponseUserDto(user);
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() passwordData: UpdatePasswordDto,
-  ): ResponseUserDto {
-    const user = this.usersService.update(id, passwordData);
+  ): Promise<ResponseUserDto> {
+    const user = await this.usersService.update(id, passwordData);
     return new ResponseUserDto(user);
   }
 
@@ -60,8 +62,8 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
-  #checkExisting(id: string) {
-    const user = this.usersService.findById(id);
+  async #checkExisting(id: string) {
+    const user = await this.usersService.findById(id);
 
     if (!user) {
       throw new NotFoundException('User is not found');

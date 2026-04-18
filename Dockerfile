@@ -9,6 +9,8 @@ RUN npm install
 
 COPY . .
 
+RUN npx prisma generate
+
 RUN npm run build
 
 #prod
@@ -16,21 +18,21 @@ FROM node:24-alpine
 
 RUN apk add --no-cache curl
 
-RUN addgroup -S appgroup && \
-    adduser -G appgroup -D -S appuser
-
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --chown=appuser:appgroup package*.json ./
+COPY package*.json ./
 
 RUN npm ci --omit=dev
 
+COPY --from=builder /app/src/generated/prisma ./dist/prisma-client
 COPY --from=builder /app/dist ./dist
 
-ENV PORT=4000
+EXPOSE $PORT
 
-EXPOSE 4000
+USER node
+
+# добавить сюда скрипт миграции
 
 CMD [ "node", "dist/main.js" ]

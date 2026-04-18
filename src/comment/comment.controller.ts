@@ -25,8 +25,10 @@ export class CommentController {
   ) {}
 
   @Post()
-  create(@Body() createCommentDto: CreateCommentDto) {
-    const article = this.articleService.findById(createCommentDto.articleId);
+  async create(@Body() createCommentDto: CreateCommentDto) {
+    const article = await this.articleService.findById(
+      createCommentDto.articleId,
+    );
 
     if (!article) {
       throw new HttpException(
@@ -39,24 +41,24 @@ export class CommentController {
   }
 
   @Get()
-  findAllByArticle(@Query() commentQueryDto: GetCommentQueryDto) {
-    return this.commentService.findByArticle(commentQueryDto.articleId);
+  async findAllByArticle(@Query() commentQueryDto: GetCommentQueryDto) {
+    return await this.commentService.findByArticle(commentQueryDto.articleId);
   }
 
   @Get(':id')
-  findOne(@Query() @Param('id', ParseUUIDPipe) id: string) {
-    return this.#checkExisting(id);
+  async findOne(@Query() @Param('id', ParseUUIDPipe) id: string) {
+    return await this.#checkExisting(id);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    this.#checkExisting(id);
-    return this.commentService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.#checkExisting(id);
+    return await this.commentService.remove(id);
   }
 
-  #checkExisting(id: string) {
-    const comment = this.commentService.findOne(id);
+  async #checkExisting(id: string) {
+    const comment = await this.commentService.findOne(id);
 
     if (!comment) {
       throw new NotFoundException('Comment is not found');

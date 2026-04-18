@@ -1,30 +1,28 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { CommentStorage } from './interfaces/comment.storage.interface';
+import { CommentDbStorage } from './store/comment.db.storage';
 
 @Injectable()
 export class CommentService {
-  constructor(
-    @Inject('CommentStorage') private readonly storage: CommentStorage,
-  ) {}
+  constructor(private readonly storage: CommentDbStorage) {}
 
-  create(createCommentDto: CreateCommentDto) {
-    return this.storage.create(createCommentDto);
+  async create(createCommentDto: CreateCommentDto) {
+    return await this.storage.create(createCommentDto);
   }
 
-  findByArticle(articleId: string) {
-    return this.storage.findByArticle(articleId);
+  async findByArticle(articleId: string) {
+    return await this.storage.findByArticle(articleId);
   }
 
-  findOne(id: string) {
-    return this.storage.findById(id);
+  async findOne(id: string) {
+    return await this.storage.findById(id);
   }
 
-  findByAuthor(id: string) {
-    return this.storage.findByAuthor(id);
+  async findByAuthor(id: string) {
+    return await this.storage.findByAuthor(id);
   }
 
-  remove(id: string) {
-    return this.storage.delete(id);
+  async remove(id: string) {
+    return await this.storage.delete(id);
   }
 }

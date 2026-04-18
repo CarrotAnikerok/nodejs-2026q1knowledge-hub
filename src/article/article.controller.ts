@@ -22,39 +22,39 @@ export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Post()
-  create(@Body() createArticleDto: CreateArticleDto) {
-    return this.articleService.create(createArticleDto);
+  async create(@Body() createArticleDto: CreateArticleDto) {
+    return await this.articleService.create(createArticleDto);
   }
 
   @Get()
-  findAll(@Query() queryArticleDto: FindQueryArticleDto) {
-    return this.articleService.findAllWithQuery(queryArticleDto);
+  async findAll(@Query() queryArticleDto: FindQueryArticleDto) {
+    return await this.articleService.findAllWithQuery(queryArticleDto);
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    const article = this.#checkExisting(id);
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    const article = await this.#checkExisting(id);
     return article;
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
-    this.#checkExisting(id);
-    return this.articleService.update(id, updateArticleDto);
+    await this.#checkExisting(id);
+    return await this.articleService.update(id, updateArticleDto);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    this.#checkExisting(id);
-    return this.articleService.remove(id);
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.#checkExisting(id);
+    return await this.articleService.remove(id);
   }
 
-  #checkExisting(id: string) {
-    const article = this.articleService.findById(id);
+  async #checkExisting(id: string) {
+    const article = await this.articleService.findById(id);
 
     if (!article) {
       throw new NotFoundException('Article is not found');

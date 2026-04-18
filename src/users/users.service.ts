@@ -1,43 +1,42 @@
 import {
   HttpException,
   HttpStatus,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { UserStorage } from './interfaces/users.storage.interface';
 import { ArticleService } from 'src/article/article.service';
 import { User } from './entities/users.entity';
 import { CommentService } from 'src/comment/comment.service';
+import { UserDbStorage } from './store/users.db.storage';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject('UserStorage') private storage: UserStorage,
+    private storage: UserDbStorage,
     private articleService: ArticleService,
     private commentService: CommentService,
   ) {}
 
-  create(createUserDto: CreateUserDto): User | undefined {
-    return this.storage.create(createUserDto);
+  async create(createUserDto: CreateUserDto): Promise<User | undefined> {
+    return await this.storage.create(createUserDto);
   }
 
-  findAll(): User[] {
-    return this.storage.findAll();
+  async findAll(): Promise<User[]> {
+    return await this.storage.findAll();
   }
 
-  findById(id: string): User | undefined {
-    return this.storage.findById(id);
+  async findById(id: string): Promise<User | undefined> {
+    return await this.storage.findById(id);
   }
 
-  findByLogin(login: string): User | undefined {
-    return this.storage.findByLogin(login);
+  async findByLogin(login: string): Promise<User | undefined> {
+    return await this.storage.findByLogin(login);
   }
 
-  update(id: string, passwordData: UpdatePasswordDto): User | undefined {
-    const user = this.storage.findById(id);
+  async update(id: string, passwordData: UpdatePasswordDto): Promise<User> {
+    const user = await this.storage.findById(id);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -50,16 +49,17 @@ export class UsersService {
     return this.storage.update(id, { password: passwordData.newPassword });
   }
 
-  remove(id: string) {
-    const articles = this.articleService.findByAuthor(id);
-    const comments = this.commentService.findByAuthor(id);
+  async remove(id: string) {
+    const articles = await this.articleService.findByAuthor(id);
+    const comments = await this.commentService.findByAuthor(id);
 
-    articles.forEach((article) =>
-      this.articleService.update(article.id, { authorId: null }),
+    articles.forEach(
+      async (article) =>
+        await this.articleService.update(article.id, { authorId: null }),
     );
 
-    comments.forEach((comment) => {
-      this.commentService.remove(comment.id);
+    comments.forEach(async (comment) => {
+      await this.commentService.remove(comment.id);
     });
 
     return this.storage.delete(id);
