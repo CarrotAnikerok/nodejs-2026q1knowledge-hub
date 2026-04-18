@@ -57,8 +57,8 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    this.#checkExisting(id);
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    await this.#checkExisting(id);
     return this.usersService.remove(id);
   }
 

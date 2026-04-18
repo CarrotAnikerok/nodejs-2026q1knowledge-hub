@@ -16,11 +16,14 @@ import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { FindQueryArticleDto } from './dto/find-query-article.dto';
+import { UserRole } from 'src/constants/enums';
+import { Roles } from 'src/decorators/role.decorator';
 
 @Controller('article')
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
+  @Roles(UserRole.EDITOR)
   @Post()
   async create(@Body() createArticleDto: CreateArticleDto) {
     return await this.articleService.create(createArticleDto);
@@ -37,6 +40,7 @@ export class ArticleController {
     return article;
   }
 
+  @Roles(UserRole.EDITOR)
   @Put(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,

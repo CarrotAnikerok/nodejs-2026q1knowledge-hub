@@ -18,9 +18,9 @@ export class UserDbStorage
 
   toPrismaUserRole(role: UserRole): Role {
     const mapRoleObject = {
-      [UserRole.ADMIN]: Role.ADMIN,
-      [UserRole.EDITOR]: Role.EDITOR,
-      [UserRole.VIEWER]: Role.VIEWER,
+      [UserRole.ADMIN]: Role.admin,
+      [UserRole.EDITOR]: Role.editor,
+      [UserRole.VIEWER]: Role.viewer,
     };
 
     return mapRoleObject[role];
@@ -28,9 +28,9 @@ export class UserDbStorage
 
   toApiUserRole(role: Role): UserRole {
     const mapRoleObject = {
-      [Role.ADMIN]: UserRole.ADMIN,
-      [Role.EDITOR]: UserRole.EDITOR,
-      [Role.VIEWER]: UserRole.VIEWER,
+      [Role.admin]: UserRole.ADMIN,
+      [Role.editor]: UserRole.EDITOR,
+      [Role.viewer]: UserRole.VIEWER,
     };
 
     return mapRoleObject[role];

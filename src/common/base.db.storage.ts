@@ -20,9 +20,19 @@ export class BaseDbStorage<T extends { id: string }> implements Storage<T> {
   }
 
   async create(dto: Partial<T>): Promise<T> {
-    const row = await this.model.create({
-      data: { ...dto },
-    });
+    const { tags, ...rest } = dto as any;
+
+    const row = {
+      ...rest,
+      ...(tags?.length > 0 && {
+        tags: {
+          connectOrCreate: tags.map((tagName: string) => ({
+            where: { name: tagName },
+            create: { name: tagName },
+          })),
+        },
+      }),
+    };
 
     return this.toEntity(row);
   }
@@ -38,7 +48,7 @@ export class BaseDbStorage<T extends { id: string }> implements Storage<T> {
   }
 
   async update(id: T['id'], dto: Partial<T>): Promise<T> {
-    return this.toEntity(await this.model.update({ where: { id }, dto }));
+    return this.toEntity(await this.model.update({ where: { id }, data: dto }));
   }
 
   async delete(id: T['id']): Promise<void> {
