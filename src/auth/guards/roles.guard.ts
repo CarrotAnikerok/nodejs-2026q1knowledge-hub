@@ -2,7 +2,7 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  UnauthorizedException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserRole } from 'src/constants/enums';
@@ -44,9 +44,13 @@ export class RolesGuard implements CanActivate {
     }
 
     if (user.role === UserRole.EDITOR) {
+      if (!requiredRoles) {
+        return true;
+      }
+
       return requiredRoles.some((role) => role === user.role);
     }
 
-    throw new UnauthorizedException('Not enough rights');
+    throw new ForbiddenException('Not enough rights');
   }
 }

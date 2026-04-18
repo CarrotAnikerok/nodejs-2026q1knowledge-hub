@@ -1,8 +1,17 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignDto } from './dto/sing-auth.dto';
 import { refreshTokenDto } from './dto/refresh-token.dto';
 import { Public } from 'src/decorators/public.decorator';
+import { ResponseUserDto } from 'src/users/dto/response-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -10,22 +19,34 @@ export class AuthController {
 
   @Public()
   @HttpCode(HttpStatus.CREATED)
-  @Post('signUp')
-  signUp(@Body() signInDto: SignDto) {
-    return this.authService.signUp(signInDto.login, signInDto.password);
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('signup')
+  async signUp(@Body() signInDto: SignDto) {
+    const newUser = await this.authService.signUp(
+      signInDto.login,
+      signInDto.password,
+    );
+    return new ResponseUserDto(newUser);
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: SignDto) {
-    return this.authService.signIn(signInDto.login, signInDto.password);
+  async signIn(@Body() signInDto: SignDto) {
+    return await this.authService.signIn(signInDto.login, signInDto.password);
   }
 
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
-  refresh(@Body() dto: refreshTokenDto) {
-    return this.authService.refresh(dto);
+  async refresh(@Body() dto: refreshTokenDto) {
+    return await this.authService.refresh(dto);
+  }
+
+  @Post('logout')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  async logout(@Body() dto: refreshTokenDto): Promise<void> {
+    await this.authService.logout(dto);
   }
 }

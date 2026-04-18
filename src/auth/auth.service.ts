@@ -11,12 +11,21 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { jwtConstants } from './constants';
 import { refreshTokenDto } from './dto/refresh-token.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+
+type Payload = {
+  userId: string;
+  sub: string;
+  login: string;
+  role: UserRole;
+};
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private prisma: PrismaService,
   ) {}
 
   async signUp(login: string, password: string): Promise<any> {
@@ -31,10 +40,10 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(
       password,
-      process.env.CRYPT_SALT || 10,
+      parseInt(process.env.CRYPT_SALT, 10) || 10,
     );
 
-    await this.usersService.create({
+    return await this.usersService.create({
       login,
       password: hashedPassword,
       role: UserRole.VIEWER,
@@ -43,13 +52,21 @@ export class AuthService {
 
   async signIn(login: string, password: string): Promise<any> {
     const user = await this.usersService.findByLogin(login);
+    console.log(`user is ${user}`);
+    //console.log(`password is ${password} and coded is ${user.password}`);
+    //console.log(`is even ${bcrypt.compare(password, user.password)}`);
 
-    if (!user || bcrypt.compare(password, user.password)) {
+    if (!user || !bcrypt.compare(password, user.password)) {
       throw new HttpException('Authentication failed', HttpStatus.FORBIDDEN);
     }
 
-    const payload = { sub: user.id, login: user.login, role: user.role };
-    return this.getTokens(payload.sub, payload.login, payload.role);
+    const payload: Payload = {
+      sub: user.id,
+      userId: user.id,
+      login: user.login,
+      role: user.role,
+    };
+    return this.getTokens(payload);
   }
 
   async refresh(dto: refreshTokenDto) {
@@ -57,7 +74,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    let decodedPayload: { userId: string; login: string; role: string };
+    let decodedPayload: Payload;
 
     try {
       decodedPayload = await this.jwtService.verifyAsync(dto.refreshToken, {
@@ -67,16 +84,36 @@ export class AuthService {
       throw new ForbiddenException();
     }
 
-    return this.getTokens(
-      decodedPayload.userId,
-      decodedPayload.login,
-      decodedPayload.role,
-    );
+    const { sub, userId, login, role } = decodedPayload;
+
+    return this.getTokens({ sub, userId, login, role });
   }
 
-  async getTokens(userId: string, login: string, role: string) {
-    const payload = { sub: userId, login, role };
+  async logout(dto: refreshTokenDto) {
+    if (!dto.refreshToken) {
+      throw new UnauthorizedException();
+    }
 
+    let decodedPayload;
+
+    try {
+      decodedPayload = await this.jwtService.verifyAsync(dto.refreshToken, {
+        secret: jwtConstants.refreshSecret,
+      });
+    } catch {
+      throw new ForbiddenException();
+    }
+
+    const expiresAt = new Date(decodedPayload.exp * 1000);
+    await this.prisma.tokenBlacklist.create({
+      data: {
+        token: dto.refreshToken,
+        expiresAt,
+      },
+    });
+  }
+
+  async getTokens(payload: Payload) {
     const baseOptions: JwtSignOptions = {
       secret: jwtConstants.secret,
       expiresIn: jwtConstants.expireTime as any,
@@ -87,11 +124,11 @@ export class AuthService {
       expiresIn: jwtConstants.refreshExpireTime as any,
     };
 
-    const [baseToken, refreshToken] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, baseOptions),
       this.jwtService.signAsync(payload, refreshOptions),
     ]);
 
-    return { baseToken, refreshToken };
+    return { accessToken, refreshToken };
   }
 }

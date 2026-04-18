@@ -20,6 +20,10 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User | undefined> {
+    if (await this.findByLogin(createUserDto.login)) {
+      throw new HttpException('Login is already taken', HttpStatus.BAD_REQUEST);
+    }
+
     return await this.storage.create(createUserDto);
   }
 

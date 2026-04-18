@@ -12,20 +12,20 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
-  EDITOR
-  VIEWER
+  admin @map("admin")
+  editor @map("editor")
+  viewer @map("viewer")
 }
 
 enum Status {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
+  draft     @map("draft")
+  published @map("published")
+  archived  @map("archived")
 }
 
 model User {
   id String @id @default(uuid()) @db.Uuid
-  login String
+  login String @unique
   password String
   role Role
   createdAt DateTime @default(now())
@@ -44,10 +44,10 @@ model Article {
   updatedAt DateTime @default(now())
 
   author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  authorId String?
+  authorId String? @db.Uuid
 
   category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  categoryId String?
+  categoryId String? @db.Uuid
 
   comments Comment[]
   tags Tag[]
@@ -69,10 +69,10 @@ model Comment {
   createdAt DateTime @default(now())
 
   author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId String
+  authorId String @db.Uuid
 
   article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  articleId String
+  articleId String @db.Uuid
 }
 
 model Tag {
@@ -82,4 +82,9 @@ model Tag {
   articles Article[]
 
   @@index([name])
+}
+model TokenBlacklist {
+  id        String   @id @default(uuid()) @db.Uuid
+  token     String   @unique
+  expiresAt DateTime
 }

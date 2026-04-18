@@ -170,6 +170,7 @@ describe('RBAC - Users (e2e)', () => {
         .set(adminHeaders)
         .send(createUserDto);
 
+      console.log(`post is ${createResponse.status}`);
       expect(createResponse.status).toBe(StatusCodes.CREATED);
       const { id: userId } = createResponse.body;
 
@@ -178,6 +179,7 @@ describe('RBAC - Users (e2e)', () => {
         .get(usersRoutes.getAll)
         .set(adminHeaders);
 
+        console.log(`get all is ${getAllResponse.status}`);
       expect(getAllResponse.status).toBe(StatusCodes.OK);
 
       // GET by id
@@ -185,6 +187,7 @@ describe('RBAC - Users (e2e)', () => {
         .get(usersRoutes.getById(userId))
         .set(adminHeaders);
 
+        console.log(`get is ${getByIdResponse.status}`);
       expect(getByIdResponse.status).toBe(StatusCodes.OK);
 
       // PUT (update password)
@@ -196,6 +199,7 @@ describe('RBAC - Users (e2e)', () => {
           newPassword: 'NEW_PASSWORD',
         });
 
+        console.log(`put is ${updateResponse.status}`);
       expect(updateResponse.status).toBe(StatusCodes.OK);
 
       // DELETE
@@ -203,6 +207,7 @@ describe('RBAC - Users (e2e)', () => {
         .delete(usersRoutes.delete(userId))
         .set(adminHeaders);
 
+        console.log(`delete is ${deleteResponse.status}`);
       expect(deleteResponse.status).toBe(StatusCodes.NO_CONTENT);
     });
   });

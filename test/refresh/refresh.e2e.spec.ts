@@ -75,6 +75,8 @@ describe('Refresh (e2e)', () => {
         .post(authRoutes.refresh)
         .send({ refreshToken: userTokens.refreshToken });
 
+      console.log(response.body);
+
       expect(response.statusCode).toBe(HttpStatus.OK);
       expect(response.body).toBeInstanceOf(Object);
 
