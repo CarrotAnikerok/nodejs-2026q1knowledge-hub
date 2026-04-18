@@ -30,6 +30,11 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
+
+    if (request.path === '/' || request.path === '/doc') {
+      return true;
+    }
+
     const token = this.extractTokenFromHeader(request);
 
     const isBlacklisted = await this.prisma.tokenBlacklist.findUnique({
