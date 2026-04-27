@@ -9,3 +9,9 @@ export enum ArticleStatus {
   PUBLISHED = 'published',
   ARCHIVED = 'archived',
 }
+
+export enum MaxPromptLength {
+  SHORT = 'short',
+  MEDIUM = 'medium',
+  DETAILED = 'detailed',
+}

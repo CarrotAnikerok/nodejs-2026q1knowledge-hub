@@ -14,7 +14,9 @@ export class ArticleDbStorage extends BaseDbStorage<Article> {
   async findAllWithQuery(
     queryArticleDto: FindQueryArticleDto,
   ): Promise<Article[]> {
+    console.log('find all with qr');
     const { categoryId, status, tag } = queryArticleDto;
+    console.log(`status is ${status}`);
     return await this.model.findMany({
       where: {
         categoryId: categoryId ?? undefined,
