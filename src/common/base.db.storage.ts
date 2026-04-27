@@ -34,9 +34,7 @@ export class BaseDbStorage<T extends { id: string }> implements Storage<T> {
       }),
     };
 
-    console.log(row);
     await this.model.create({ data: row });
-    console.log(this.toEntity(row));
 
     return this.toEntity(row);
   }

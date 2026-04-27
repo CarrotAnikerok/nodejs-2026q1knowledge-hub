@@ -14,12 +14,10 @@ export class ArticleService {
   ) {}
 
   async create(createArticleDto: CreateArticleDto): Promise<Article> {
-    console.log('creating article');
     return await this.storage.create(createArticleDto);
   }
 
   async findAll(): Promise<Article[]> {
-    console.log('finding all article');
     return await this.storage.findAll();
   }
 
