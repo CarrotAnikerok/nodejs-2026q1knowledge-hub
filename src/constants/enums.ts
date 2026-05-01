@@ -15,3 +15,16 @@ export enum MaxPromptLength {
   MEDIUM = 'medium',
   DETAILED = 'detailed',
 }
+
+export enum AnalyzeTask {
+  REVIEW = 'review',
+  BUGS = 'bugs',
+  OPTIMIZE = 'optimize',
+  EXPLAIN = 'explain',
+}
+
+export enum AnalyzeSeverity {
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+}

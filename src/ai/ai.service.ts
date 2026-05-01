@@ -2,6 +2,7 @@ import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import 'dotenv/config';
 import { GeminiService } from './gemini.service';
 import {
+  getAnalyzeInstruction,
   getSummarizeArticlePrompt,
   getSummarizeInstruction,
   getTranslateArticlePrompt,
@@ -14,6 +15,8 @@ import { MaxPromptLength } from 'src/constants/enums';
 import { SummarizeArticleResponseDto } from './dto/summarize-article-response.dto';
 import { TranslateArticleResponseDto } from './dto/translate-article-response.dto';
 import { TranslateArticleRequestDto } from './dto/translate-article-request.dto';
+import { AnalyzeArticleRequestDto } from './dto/analize-article-request.dto';
+import { AnalyzeArticleResponseDto } from './dto/analize-article-response.dto';
 
 @Injectable()
 export class AiService {
@@ -59,16 +62,45 @@ export class AiService {
     );
 
     let translation;
+
     try {
       translation = JSON.parse(rawTranslationJson);
     } catch {
-      throw new ServiceUnavailableException(rawTranslationJson);
+      throw new ServiceUnavailableException('Sorry, try again!');
     }
 
     const answerDto: TranslateArticleResponseDto = {
       articleId: id,
       translatedText: translation.translation,
       detectedLanguage: translation.detected_language,
+    };
+
+    return answerDto;
+  }
+
+  async analyze(
+    id: string,
+    articleRequest: AnalyzeArticleRequestDto,
+  ): Promise<AnalyzeArticleResponseDto> {
+    const article: Article = await this.articleService.findById(id);
+    const rawAnalyzeJson = await this.ai.sendPrompt(
+      getTranslateArticlePrompt(article.content, articleRequest.task),
+      getAnalyzeInstruction(),
+    );
+
+    let analysis;
+
+    try {
+      analysis = JSON.parse(rawAnalyzeJson);
+    } catch {
+      throw new ServiceUnavailableException('Sorry, try again!');
+    }
+
+    const answerDto: AnalyzeArticleResponseDto = {
+      articleId: id,
+      analysis: analysis.analysis,
+      suggestions: analysis.suggestions,
+      severity: analysis.severity,
     };
 
     return answerDto;
