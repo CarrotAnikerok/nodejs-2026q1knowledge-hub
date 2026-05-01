@@ -3,7 +3,7 @@ import 'dotenv/config';
 
 @Injectable()
 export class GeminiService {
-  async sendPrompt(prompt: string) {
+  async sendPrompt(prompt: string, systemInstruction: string) {
     const apiKey = process.env.GEMINI_API_KEY;
     const host =
       process.env.GEMINI_API_BASE_URL ||
@@ -18,6 +18,9 @@ export class GeminiService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: systemInstruction }],
+          },
           contents: [
             {
               parts: [{ text: prompt }],

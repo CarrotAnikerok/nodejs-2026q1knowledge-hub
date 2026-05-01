@@ -1,6 +1,7 @@
 import { Body, Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { AiService } from './ai.service';
 import { SummarizeArticleRequestDto } from './dto/summarize-article-request.dto';
+import { TranslateArticleRequestDto } from './dto/translate-article-request.dto';
 
 @Controller('ai')
 export class AiController {
@@ -12,5 +13,13 @@ export class AiController {
     @Body() articleRequest: SummarizeArticleRequestDto,
   ) {
     return this.aiService.summarize(id, articleRequest);
+  }
+
+  @Post('articles/:articleId/translate')
+  async translate(
+    @Param('articleId', ParseUUIDPipe) id: string,
+    @Body() articleRequest: TranslateArticleRequestDto,
+  ) {
+    return this.aiService.translate(id, articleRequest);
   }
 }
