@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { Article } from './entities/article.entity';
@@ -28,7 +28,13 @@ export class ArticleService {
   }
 
   async findById(id: string): Promise<Article | undefined> {
-    return await this.storage.findById(id);
+    const article = this.storage.findById(id);
+
+    if (!article) {
+      throw new NotFoundException('Article is not found');
+    }
+
+    return article;
   }
 
   async findByAuthor(userId: string): Promise<Article[]> {

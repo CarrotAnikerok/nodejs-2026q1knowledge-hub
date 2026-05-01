@@ -34,6 +34,8 @@ export class BaseDbStorage<T extends { id: string }> implements Storage<T> {
       }),
     };
 
+    await this.model.create({ data: row });
+
     return this.toEntity(row);
   }
 

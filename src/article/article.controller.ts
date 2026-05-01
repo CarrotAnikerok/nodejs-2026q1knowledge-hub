@@ -6,7 +6,6 @@ import {
   Param,
   Delete,
   Put,
-  NotFoundException,
   HttpStatus,
   HttpCode,
   ParseUUIDPipe,
@@ -36,8 +35,7 @@ export class ArticleController {
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    const article = await this.#checkExisting(id);
-    return article;
+    return await this.articleService.findById(id);
   }
 
   @Roles(UserRole.EDITOR)
@@ -46,24 +44,12 @@ export class ArticleController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateArticleDto: UpdateArticleDto,
   ) {
-    await this.#checkExisting(id);
     return await this.articleService.update(id, updateArticleDto);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    await this.#checkExisting(id);
     return await this.articleService.remove(id);
-  }
-
-  async #checkExisting(id: string) {
-    const article = await this.articleService.findById(id);
-
-    if (!article) {
-      throw new NotFoundException('Article is not found');
-    }
-
-    return article;
   }
 }

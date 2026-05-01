@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { CommentModule } from './comment/comment.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PrismaModule } from './prisma/prisma.module';
     CategoryModule,
     CommentModule,
     PrismaModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

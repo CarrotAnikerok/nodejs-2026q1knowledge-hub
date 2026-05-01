@@ -8,6 +8,37 @@ Hello! Some additional info about this repo and its differences from original on
 - added `tsconfig.build.tsbuildinfo` and `env` to .gitignore
 - upgraded @nestjs/jwt, @nestjs/swagger, class-validator, @types/jest in package.json. it works as it supposed on my machine.
 
+## AI
+
+1. To obtain Gemini API key you need:
+  - go to https://aistudio.google.com/api-keys
+  - click 'Create API Key"
+  - in .env file fill GEMINI_API_KEY by your created api key
+
+2. This setup was tested with gemini-2.5-flash-lite and gemini-3.1-flash-lite-preview. 
+  - to use model, in .env file fill GEMINI_MODEL
+
+3. To setup project, you need fill .env parameters:
+ - fill GEMINI_API_KEY by your generated Gemini API key
+ - fill GEMINI_MODEL with model you wan to use (gemini-2.5-flash-lite, gemini-3.1-flash-lite-preview etc.)
+ - fill GEMINI_API_BASE_URL by the url that will get request (https://generativelanguage.googleapis.com)
+
+4. To run this app you can see ## Running application lower. 
+
+5. For testing endpoints use:
+  - ai/articles/:articleId/summarize
+  - ai/articles/:articleId/translate
+  - ai/articles/:articleId/analyze
+
+6. Known limitations: 
+  - You can see your model limits on the https://aistudio.google.com/rate-limit.
+  - You can see regional limits on the https://ai.google.dev/gemini-api/docs/available-regions. 
+
+7. Gemini is not available at Russia, but you can use some proxy to redirect requests.
+ - to get API key you will probably need VPN
+ - you can use my proxy, all you need to is fill GEMINI_API_BASE_URL with this URL https://misty-sunset-6fc.anikerokyay.workers.dev
+ - read https://habr.com/ru/articles/876566/ article to understand how to get gemini access.
+
 ## Docker
 
 Final application image size: 235.96мб

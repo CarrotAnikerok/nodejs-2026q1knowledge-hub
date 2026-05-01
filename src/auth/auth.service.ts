@@ -52,9 +52,6 @@ export class AuthService {
 
   async signIn(login: string, password: string): Promise<any> {
     const user = await this.usersService.findByLogin(login);
-    console.log(`user is ${user}`);
-    //console.log(`password is ${password} and coded is ${user.password}`);
-    //console.log(`is even ${bcrypt.compare(password, user.password)}`);
 
     if (!user || !bcrypt.compare(password, user.password)) {
       throw new HttpException('Authentication failed', HttpStatus.FORBIDDEN);
