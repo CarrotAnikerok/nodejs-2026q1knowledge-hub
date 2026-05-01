@@ -7,7 +7,7 @@ export class GeminiService {
     const MAX_RETRIES = 3;
 
     try {
-      const response = await this.fetchAiRequest(systemInstruction);
+      const response = await this.fetchAiRequest(prompt, systemInstruction);
 
       if (
         response.status === HttpStatus.TOO_MANY_REQUESTS ||
@@ -16,6 +16,7 @@ export class GeminiService {
         if (retryCount < MAX_RETRIES) {
           const delay = Math.pow(2, retryCount) * 1000;
           await new Promise((res) => setTimeout(res, delay));
+
           return this.sendPrompt(prompt, systemInstruction, retryCount + 1);
         }
         throw new HttpException(
@@ -43,6 +44,7 @@ export class GeminiService {
       return data.candidates[0].content.parts[0].text;
     } catch (error) {
       if (error instanceof HttpException) throw error;
+      console.log(error);
       throw new HttpException(
         'Service Unavailable',
         HttpStatus.SERVICE_UNAVAILABLE,
@@ -50,7 +52,7 @@ export class GeminiService {
     }
   }
 
-  async fetchAiRequest(systemInstruction) {
+  async fetchAiRequest(prompt, systemInstruction) {
     const apiKey = process.env.GEMINI_API_KEY;
     const host =
       process.env.GEMINI_API_BASE_URL ||
